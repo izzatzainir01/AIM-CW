@@ -1,7 +1,7 @@
 % runs the timing experiment for MY_OPTIMIZER. fgeneric.m
 % and benchmarks.m must be in the path of MATLAB/Octave
 
-addpath('PUT_PATH_TO_BBOB/matlab');  % should point to fgeneric.m etc.
+addpath('./');  % should point to fgeneric.m etc.
 
 more off;  % in octave pagination is on by default
 
