@@ -19,6 +19,7 @@ rand('state', 696969);
 
 % Open file
 fileAll = fopen("my_data/FSMapAll.csv", 'w');
+fprintf(fileAll, "sep=;\n");
 line_counter = 3;
 
 for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
@@ -28,7 +29,8 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
     % Open/create a file for each dimension and initialise it
     filename = sprintf("my_data/FSMap%02d.csv", dim);
     fileDim = fopen(filename, 'w');
-    fprintf(fileDim, "Benchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
+    fprintf(fileDim, "sep=;");
+    fprintf(fileDim, "\nBenchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
     for ifun = benchmarks('FunctionIndices')  % or benchmarksnoisy(...)
         fprintf(fileAll, "\nf%d", ifun);
         fprintf(fileDim, "\nf%d", ifun);
@@ -75,8 +77,8 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
         fprintf(fileAll, ";");
         fprintf(fileDim, ";");
         for letter = 'B' : 'P'
-            fprintf(fileAll, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, line_counter);
-            fprintf(fileDim, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, ifun + 1);
+            fprintf(fileAll, ";=FLOOR.MATH(-LOG10(%c%d),1)", letter, line_counter);
+            fprintf(fileDim, ";=FLOOR.MATH(-LOG10(%c%d),1)", letter, ifun + 1);
         end
         line_counter = line_counter + 1;
     end
