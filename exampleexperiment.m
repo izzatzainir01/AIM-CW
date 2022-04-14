@@ -18,7 +18,7 @@ t0 = clock;
 rand('state', 696969);
 
 for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
-    data_path = sprintf("my_data/dimension_%d.csv", dim);
+    data_path = sprintf("my_data/FSMap%02d.csv", dim);
     fileID = fopen(data_path, 'w');
     fprintf(fileID, "Benchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
     for ifun = benchmarks('FunctionIndices')  % or benchmarksnoisy(...)
