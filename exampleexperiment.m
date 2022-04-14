@@ -20,7 +20,7 @@ rand('state', 696969);
 for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
     data_path = sprintf("my_data/dimension_%d.csv", dim);
     fileID = fopen(data_path, 'w');
-    fprintf(fileID, "Benchmarks,Instance 1,Instance 2,Instance 3,Instance 4,Instance 5,Instance 6,Instance 7,Instance 8,Instance 9,Instance 10,Instance 11,Instance 12,Instance 13,Instance 14,Instance 15,,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores,Scores");
+    fprintf(fileID, "Benchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
     for ifun = benchmarks('FunctionIndices')  % or benchmarksnoisy(...)
         fprintf(fileID, "\nf%d", ifun);
         for iinstance = [1:15]  % first 15 function instances
@@ -57,9 +57,22 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
             fgeneric('finalize');
 
             % Write data to data.csv
-            fprintf(fileID, ",%.4e", delta_ftarget);
+            fprintf(fileID, ";%.4e", delta_ftarget);
         end
         disp(['      Date and Time: ' num2str(clock, ' %.0f')]);
+
+        % Write formula for scores
+        fprintf(fileID, ";");
+        for letter = 'B' : 'P'
+            fprintf(fileID, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, ifun + 1);
+        end
     end
     fprintf('\n---- DIMENSION %d-D DONE ----\n\n', dim);
+
+    % Get total score
+    fprintf(fileID, "\n");
+    for letter = 'A' : 'Q'
+        fprintf(fileID, ";");
+    end
+    fprintf(fileID, "Total;=SUM(R2:AF25)");
 end
