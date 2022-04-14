@@ -1,2 +1,4 @@
 **/*.asv
 data/*
+my_data/*
+test.m
