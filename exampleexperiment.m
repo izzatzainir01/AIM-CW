@@ -17,10 +17,13 @@ more off;  % in octave pagination is on by default
 t0 = clock;
 rand('state', 696969);
 
+% Open file
+fileID = fopen("FSMaps.csv", 'w');
+line_counter = 3;
+
 for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
-    data_path = sprintf("my_data/FSMap%02d.csv", dim);
-    fileID = fopen(data_path, 'w');
-    fprintf(fileID, "Benchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
+    fprintf(fileID, "DIMENSION %d-D", dim);
+    fprintf(fileID, "\nBenchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
     for ifun = benchmarks('FunctionIndices')  % or benchmarksnoisy(...)
         fprintf(fileID, "\nf%d", ifun);
         for iinstance = [1:15]  % first 15 function instances
@@ -64,8 +67,9 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
         % Write formula for scores
         fprintf(fileID, ";");
         for letter = 'B' : 'P'
-            fprintf(fileID, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, ifun + 1);
+            fprintf(fileID, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, line_counter);
         end
+        line_counter = line_counter + 1;
     end
     fprintf('\n---- DIMENSION %d-D DONE ----\n\n', dim);
 
@@ -74,5 +78,13 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
     for letter = 'A' : 'Q'
         fprintf(fileID, ";");
     end
-    fprintf(fileID, "Total;=SUM(R2:AF25)");
+    fprintf(fileID, "Total;=SUM(R%d:AF%d)\n\n", line_counter - 24, line_counter - 1);
+
+    line_counter = line_counter + 4;
 end
+
+% Get sum of total scores across dimensions
+for letter = 'A' : 'Q'
+    fprintf(fileID, ";");
+end
+fprintf(fileID, "SUM;=SUM(S139,S111,S83,S55,S27)");
