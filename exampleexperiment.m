@@ -7,7 +7,7 @@ addpath('./');      % should point to fgeneric.m etc.
 datapath = 'data';  % different folder for each experiment
 opt.algName = 'Particle Swarm Optimization';
 opt.comments = 'PUT MORE DETAILED INFORMATION, PARAMETER SETTINGS ETC';
-maxfunevals = '10 * dim'; % 10*dim is a short test-experiment taking a few minutes
+maxfunevals = '5000'; % 10*dim is a short test-experiment taking a few minutes
                           % INCREMENT maxfunevals successively to larger value(s)
 minfunevals = 'dim + 2';  % PUT MINIMAL SENSIBLE NUMBER OF EVALUATIONS for a restart
 maxrestarts = 1e4;        % SET to zero for an entirely deterministic algorithm
@@ -24,7 +24,7 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
 
             % independent restarts until maxfunevals or ftarget is reached
             for restarts = 0:maxrestarts
-                PSO('fgeneric', dim, fgeneric('ftarget'), ...
+                MY_OPTIMIZER('fgeneric', dim, fgeneric('ftarget'), ...
                     eval(maxfunevals) - fgeneric('evaluations'));
                 if fgeneric('fbest') < fgeneric('ftarget') || ...
                         fgeneric('evaluations') + eval(minfunevals) > eval(maxfunevals)

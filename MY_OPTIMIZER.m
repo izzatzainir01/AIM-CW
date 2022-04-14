@@ -1,4 +1,4 @@
-function PSO(FUN, DIM, ftarget, maxfunevals)
+function MY_OPTIMIZER(FUN, DIM, ftarget, maxfunevals)
 
 % Set algorithm parameters
 popsize = 40;
