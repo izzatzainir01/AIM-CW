@@ -18,14 +18,20 @@ t0 = clock;
 rand('state', 696969);
 
 % Open file
-fileID = fopen("FSMaps.csv", 'w');
+fileAll = fopen("my_data/FSMapAll.csv", 'w');
 line_counter = 3;
 
 for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
-    fprintf(fileID, "DIMENSION %d-D", dim);
-    fprintf(fileID, "\nBenchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
+    % Initialise header of each dimension in FSMapAll
+    fprintf(fileAll, "DIMENSION %d-D", dim);
+    fprintf(fileAll, "\nBenchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
+    % Open/create a file for each dimension and initialise it
+    filename = sprintf("my_data/FSMap%02d.csv", dim);
+    fileDim = fopen(filename, 'w');
+    fprintf(fileDim, "Benchmarks;Instance 1;Instance 2;Instance 3;Instance 4;Instance 5;Instance 6;Instance 7;Instance 8;Instance 9;Instance 10;Instance 11;Instance 12;Instance 13;Instance 14;Instance 15;;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores;Scores");
     for ifun = benchmarks('FunctionIndices')  % or benchmarksnoisy(...)
-        fprintf(fileID, "\nf%d", ifun);
+        fprintf(fileAll, "\nf%d", ifun);
+        fprintf(fileDim, "\nf%d", ifun);
         for iinstance = [1:15]  % first 15 function instances
             fgeneric('initialize', ifun, iinstance, datapath, opt);
 
@@ -59,32 +65,38 @@ for dim = [2,3,5,10,20]  % small dimensions first, for CPU reasons
 
             fgeneric('finalize');
 
-            % Write data to data.csv
-            fprintf(fileID, ";%.4e", delta_ftarget);
+            % Write data csv files
+            fprintf(fileAll, ";%.4e", delta_ftarget);
+            fprintf(fileDim, ";%.4e", delta_ftarget);
         end
         disp(['      Date and Time: ' num2str(clock, ' %.0f')]);
 
         % Write formula for scores
-        fprintf(fileID, ";");
+        fprintf(fileAll, ";");
+        fprintf(fileDim, ";");
         for letter = 'B' : 'P'
-            fprintf(fileID, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, line_counter);
+            fprintf(fileAll, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, line_counter);
+            fprintf(fileDim, ";=FLOOR.XCL(-LOG10(%c%d),1)", letter, ifun + 1);
         end
         line_counter = line_counter + 1;
     end
     fprintf('\n---- DIMENSION %d-D DONE ----\n\n', dim);
 
     % Get total score
-    fprintf(fileID, "\n");
+    fprintf(fileAll, "\n");
+    fprintf(fileDim, "\n");
     for letter = 'A' : 'Q'
-        fprintf(fileID, ";");
+        fprintf(fileAll, ";");
+        fprintf(fileDim, ";");
     end
-    fprintf(fileID, "Total;=SUM(R%d:AF%d)\n\n", line_counter - 24, line_counter - 1);
+    fprintf(fileAll, "Total;=SUM(R%d:AF%d)\n\n", line_counter - 24, line_counter - 1);
+    fprintf(fileDim, "Total;=SUM(R2:AF25)\n\n");
 
     line_counter = line_counter + 4;
 end
 
 % Get sum of total scores across dimensions
 for letter = 'A' : 'Q'
-    fprintf(fileID, ";");
+    fprintf(fileAll, ";");
 end
-fprintf(fileID, "SUM;=SUM(S139,S111,S83,S55,S27)");
+fprintf(fileAll, "SUM;=SUM(S139,S111,S83,S55,S27)");
